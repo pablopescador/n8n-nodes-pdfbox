@@ -157,16 +157,17 @@ export class PdfBox implements INodeType {
 					}
 				}
 			} catch (error) {
+				const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
 				if (this.continueOnFail()) {
 					returnData.push({
 						json: {
-							error: error.message,
+							error: errorMessage,
 						},
 						pairedItem: { item: i },
 					});
 					continue;
 				}
-				throw new NodeOperationError(this.getNode(), `Error extrayendo PDF: ${error.message}`, {
+				throw new NodeOperationError(this.getNode(), `Error extrayendo PDF: ${errorMessage}`, {
 					itemIndex: i,
 				});
 			}

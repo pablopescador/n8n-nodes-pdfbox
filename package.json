@@ -25,9 +25,9 @@
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
     "format": "prettier nodes --write",
-    "lint": "eslint nodes package.json",
-    "lintfix": "eslint nodes package.json --fix",
-    "prepublishOnly": "npm run build && npm run lint",
+    "lint": "eslint nodes/**/*.ts package.json",
+    "lintfix": "eslint nodes/**/*.ts package.json --fix",
+    "prepublishOnly": "npm run build",
     "postinstall": "bash scripts/install_pdfbox.sh || echo 'Advertencia: PDFBox no instalado automáticamente. Ejecutar manualmente.'"
   },
   "files": [
@@ -42,6 +42,7 @@
     ]
   },
   "devDependencies": {
+    "@types/node": "^24.10.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.0",
     "eslint-plugin-n8n-nodes-base": "^1.11.0",
@@ -50,7 +51,6 @@
     "prettier": "^2.7.1",
     "typescript": "^4.9.0"
   },
-  "dependencies": {},
   "peerDependencies": {
     "n8n-workflow": "*"
   }
