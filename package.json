@@ -1,0 +1,57 @@
+{
+  "name": "n8n-nodes-pdfbox",
+  "version": "0.1.0",
+  "description": "n8n community node para extracción de texto de PDFs usando Apache PDFBox",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "pdf",
+    "pdfbox",
+    "text-extraction",
+    "apache-pdfbox"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/pablopescador/n8n-nodes-pdfbox",
+  "author": {
+    "name": "Pablo Pescador",
+    "email": "tu-email@ejemplo.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pablopescador/n8n-nodes-pdfbox.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes --write",
+    "lint": "eslint nodes package.json",
+    "lintfix": "eslint nodes package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint",
+    "postinstall": "bash scripts/install_pdfbox.sh || echo 'Advertencia: PDFBox no instalado automáticamente. Ejecutar manualmente.'"
+  },
+  "files": [
+    "dist",
+    "scripts"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [],
+    "nodes": [
+      "dist/nodes/PdfBox/PdfBox.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.0",
+    "eslint-plugin-n8n-nodes-base": "^1.11.0",
+    "gulp": "^4.0.2",
+    "n8n-workflow": "^1.0.0",
+    "prettier": "^2.7.1",
+    "typescript": "^4.9.0"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}
