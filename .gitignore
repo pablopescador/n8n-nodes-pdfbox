@@ -1,0 +1,8 @@
+dist/
+node_modules/
+*.js
+*.d.ts
+*.map
+!gulpfile.js
+!index.js
+package-lock.json

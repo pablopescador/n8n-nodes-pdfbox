@@ -1,0 +1,60 @@
+{
+	"name": "n8n-nodes-pdfbox",
+	"version": "0.1.0",
+	"description": "Alternative node to Extract from PDF using PDFBox",
+	"keywords": [
+		"n8n-community-node-package",
+		"n8n",
+		"n8n-nodes",
+		"pdf",
+		"pdfbox",
+		"pdf-extractor"
+	],
+	"license": "MIT",
+	"homepage": "https://github.com/pablopescador/n8n-nodes-pdfbox",
+	"author": {
+		"name": "Pablo Pescador",
+		"email": ""
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pablopescador/n8n-nodes-pdfbox.git"
+	},
+	"engines": {
+		"node": ">=18.10"
+	},
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc && gulp build:icons",
+		"dev": "tsc --watch",
+		"format": "prettier nodes --write",
+		"lint": "eslint 'nodes/**/*.ts' package.json",
+		"lintfix": "eslint 'nodes/**/*.ts' package.json --fix",
+		"prepublishOnly": "npm run build && npm run lint"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"nodes": [
+			"dist/nodes/PdfBox/PdfBox.node.js"
+		]
+	},
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"@typescript-eslint/parser": "^6.0.0",
+		"eslint": "^8.0.0",
+		"eslint-plugin-n8n-nodes-base": "^1.16.0",
+		"gulp": "^4.0.2",
+		"prettier": "^3.0.0",
+		"typescript": "^5.0.0"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	},
+	"dependencies": {
+		"pdfjs-dist": "^4.2.67",
+		"unpdf": "^1.4.0"
+	}
+}
