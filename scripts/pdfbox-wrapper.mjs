@@ -9,9 +9,9 @@
  */
 
 import { spawn } from 'child_process';
-import { readFile, unlink, mkdir } from 'fs/promises';
+import { readFile, unlink, mkdir, readdir } from 'fs/promises';
+import { readdirSync, existsSync } from 'fs';
 import { randomBytes } from 'crypto';
-import { existsSync } from 'fs';
 
 /**
  * Extrae texto de un PDF usando Apache PDFBox
@@ -75,7 +75,7 @@ async function extractTextPDFBox(pdfPath, jarPath = '/usr/local/lib/pdfbox/pdfbo
  * @param {string} pdfPath - Ruta absoluta al archivo PDF
  * @param {string} outputDir - Directorio donde guardar las imágenes
  * @param {string} prefix - Prefijo para nombres de archivos (default: 'image')
- * @param {string} format - Formato de imagen: 'png' o 'jpg' (default: 'png')
+ * @param {string} format - Formato de imagen: 'png' o 'jpg' (default: 'png') - NOTA: PDFBox extrae en formato original
  * @param {string} jarPath - Ruta al JAR de PDFBox
  * @returns {Promise<number>} - Número de imágenes extraídas
  */
@@ -86,14 +86,13 @@ async function extractImagesPDFBox(pdfPath, outputDir, prefix = 'image', format 
     }
     
     return new Promise((resolve, reject) => {
-        // Comando: java -jar pdfbox.jar export:images -i input.pdf -o outputDir/ -prefix image
+        // Comando: java -jar pdfbox.jar export:images -i input.pdf -prefix outputDir/image
+        const prefixPath = `${outputDir}/${prefix}`;
         const args = [
             '-jar', jarPath,
             'export:images',
             '-i', pdfPath,
-            '-o', outputDir,
-            '-prefix', prefix,
-            '-format', format
+            '-prefix', prefixPath
         ];
 
         console.error(`[PDFBox] Extrayendo imágenes: java ${args.join(' ')}`);
@@ -115,10 +114,9 @@ async function extractImagesPDFBox(pdfPath, outputDir, prefix = 'image', format 
                 console.error(`[PDFBox] Error stderr: ${stderr}`);
                 reject(new Error(`PDFBox falló con código ${code}: ${stderr}`));
             } else {
-                // Contar archivos en directorio
-                const fs = require('fs');
-                const files = fs.readdirSync(outputDir);
-                const imageFiles = files.filter(f => f.endsWith(`.${format}`));
+                // Contar archivos en directorio (PDFBox extrae con extensiones originales: .jpg, .png, .tiff, etc.)
+                const files = readdirSync(outputDir);
+                const imageFiles = files.filter(f => /\.(jpg|jpeg|png|tif|tiff|bmp|gif)$/i.test(f));
                 
                 console.error(`[PDFBox] Extracción exitosa: ${imageFiles.length} imágenes`);
                 resolve(imageFiles.length);
