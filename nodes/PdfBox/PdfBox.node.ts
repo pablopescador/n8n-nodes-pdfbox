@@ -63,11 +63,9 @@ export class PdfBox implements INodeType {
 				const item = items[itemIndex];
 
 				if (!item.binary) {
-					throw new NodeOperationError(
-						this.getNode(),
-						'No binary data exists on item!',
-						{ itemIndex },
-					);
+					throw new NodeOperationError(this.getNode(), 'No binary data exists on item!', {
+						itemIndex,
+					});
 				}
 
 				if (!item.binary[binaryPropertyName]) {
