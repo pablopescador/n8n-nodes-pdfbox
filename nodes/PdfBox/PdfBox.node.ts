@@ -9,6 +9,8 @@ import {
 import { writeFileSync, unlinkSync } from 'fs';
 import { execSync } from 'child_process';
 import { randomBytes } from 'crypto';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 export class PdfBox implements INodeType {
 	description: INodeTypeDescription = {
@@ -127,8 +129,9 @@ export class PdfBox implements INodeType {
 		const returnData: INodeExecutionData[] = [];
 		const operation = this.getNodeParameter('operation', 0) as string;
 
-		// Ruta al wrapper de PDFBox
-		const WRAPPER_PATH = '/usr/local/lib/pdfbox/pdfbox-wrapper.mjs';
+		// Buscar wrapper en ubicación del paquete npm
+		// En n8n community nodes: /home/node/.n8n/nodes/node_modules/n8n-nodes-pdfbox/scripts/
+		const WRAPPER_PATH = join(__dirname, '..', '..', 'scripts', 'pdfbox-wrapper.mjs');
 
 		for (let i = 0; i < items.length; i++) {
 			try {
