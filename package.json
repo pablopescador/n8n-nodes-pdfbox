@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-pdfbox",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "n8n community node para extracción de texto e imágenes de PDFs usando Apache PDFBox",
   "keywords": [
     "n8n-community-node-package",
@@ -22,7 +22,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "tsc && gulp build:icons",
+    "build": "tsc && gulp build",
     "dev": "tsc --watch",
     "format": "prettier nodes --write",
     "lint": "eslint nodes/**/*.ts package.json",

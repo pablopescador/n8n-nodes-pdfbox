@@ -208,7 +208,7 @@ async function main() {
 }
 
 // Ejecutar si se llama directamente
-if (process.argv[1].endsWith('pdfbox-wrapper.mjs')) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     main();
 }
 
