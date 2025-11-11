@@ -19,18 +19,33 @@ Este nodo usa **Apache PDFBox** (estándar enterprise):
 
 ## Instalación
 
-### 1. Instalar el nodo desde n8n UI
+### 1. Instalar el nodo desde GitHub
 
-```bash
-# En la UI de n8n: Settings > Community Nodes > Install
-# Buscar: n8n-nodes-pdfbox
+**Opción A: Desde n8n UI**
+```
+Settings > Community Nodes > Install
+Ingresar: pablopescador/n8n-nodes-pdfbox
 ```
 
-O manualmente:
-
+**Opción B: Manualmente en el servidor**
 ```bash
-cd ~/.n8n
-npm install n8n-nodes-pdfbox
+# Detener n8n
+docker compose -f /home/pablo/n8n/docker-compose.yml stop n8n
+
+# Instalar el nodo
+docker exec n8n-n8n-1 npm install -g pablopescador/n8n-nodes-pdfbox
+
+# Reiniciar n8n
+docker compose -f /home/pablo/n8n/docker-compose.yml start n8n
+```
+
+**Opción C: Instalación local (desarrollo)**
+```bash
+cd ~/.n8n/nodes
+git clone https://github.com/pablopescador/n8n-nodes-pdfbox.git
+cd n8n-nodes-pdfbox
+npm install
+npm run build
 ```
 
 ### 2. Instalar dependencias en el contenedor
