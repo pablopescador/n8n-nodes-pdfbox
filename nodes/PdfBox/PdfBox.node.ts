@@ -18,7 +18,7 @@ export class PdfBox implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
-		description: 'Extrae texto de archivos PDF usando Apache PDFBox',
+		description: 'Extrae texto e imágenes de archivos PDF usando Apache PDFBox',
 		defaults: {
 			name: 'PDF Box',
 		},
@@ -37,6 +37,12 @@ export class PdfBox implements INodeType {
 						description: 'Extrae texto de un archivo PDF',
 						action: 'Extraer texto de PDF',
 					},
+					{
+						name: 'Extraer Imágenes',
+						value: 'extractImages',
+						description: 'Extrae todas las imágenes de un archivo PDF',
+						action: 'Extraer imágenes de PDF',
+					},
 				],
 				default: 'extractText',
 			},
@@ -48,7 +54,7 @@ export class PdfBox implements INodeType {
 				required: true,
 				displayOptions: {
 					show: {
-						operation: ['extractText'],
+						operation: ['extractText', 'extractImages'],
 					},
 				},
 				description: 'Nombre de la propiedad binaria que contiene el PDF',
@@ -78,6 +84,38 @@ export class PdfBox implements INodeType {
 						type: 'number',
 						default: 10,
 						description: 'Tamaño máximo del buffer para PDFs grandes (en MB)',
+					},
+				],
+			},
+			{
+				displayName: 'Opciones',
+				name: 'options',
+				type: 'collection',
+				placeholder: 'Añadir opción',
+				default: {},
+				displayOptions: {
+					show: {
+						operation: ['extractImages'],
+					},
+				},
+				options: [
+					{
+						displayName: 'Formato de Salida',
+						name: 'imageFormat',
+						type: 'options',
+						options: [
+							{ name: 'PNG', value: 'png' },
+							{ name: 'JPEG', value: 'jpg' },
+						],
+						default: 'png',
+						description: 'Formato de imagen para extraer',
+					},
+					{
+						displayName: 'Prefijo',
+						name: 'prefix',
+						type: 'string',
+						default: 'image',
+						description: 'Prefijo para nombres de archivos de imagen',
 					},
 				],
 			},
@@ -151,6 +189,87 @@ export class PdfBox implements INodeType {
 						// Limpiar archivo temporal
 						try {
 							unlinkSync(tempFileName);
+						} catch (error) {
+							// Ignorar errores de limpieza
+						}
+					}
+				} else if (operation === 'extractImages') {
+					const binaryPropertyName = this.getNodeParameter('binaryPropertyName', i) as string;
+					const options = this.getNodeParameter('options', i, {}) as {
+						imageFormat?: string;
+						prefix?: string;
+					};
+
+					// Obtener datos binarios del PDF
+					const binaryData = this.helpers.assertBinaryData(i, binaryPropertyName);
+					const pdfBuffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
+
+					// Crear archivo temporal para el PDF
+					const tempPdfFile = `/tmp/pdf_${randomBytes(8).toString('hex')}.pdf`;
+					const tempDir = `/tmp/images_${randomBytes(8).toString('hex')}`;
+					
+					writeFileSync(tempPdfFile, pdfBuffer);
+
+					try {
+						// Extraer imágenes usando PDFBox wrapper
+						const imageFormat = options.imageFormat || 'png';
+						const prefix = options.prefix || 'image';
+						
+						execSync(
+							`node ${WRAPPER_PATH} extractImages ${tempPdfFile} ${tempDir} ${prefix} ${imageFormat}`,
+							{ encoding: 'utf-8' }
+						);
+
+						// Leer las imágenes extraídas
+						const fs = require('fs');
+						const path = require('path');
+						const imageFiles = fs.readdirSync(tempDir);
+
+						if (imageFiles.length === 0) {
+							returnData.push({
+								json: {
+									message: 'No se encontraron imágenes en el PDF',
+									fileName: binaryData.fileName || 'unknown.pdf',
+								},
+								pairedItem: { item: i },
+							});
+						} else {
+							// Crear un item por cada imagen
+							for (const imageFile of imageFiles) {
+								const imagePath = path.join(tempDir, imageFile);
+								const imageBuffer = fs.readFileSync(imagePath);
+
+								returnData.push({
+									json: {
+										fileName: imageFile,
+										sourceFile: binaryData.fileName || 'unknown.pdf',
+										extractedAt: new Date().toISOString(),
+									},
+									binary: {
+										data: await this.helpers.prepareBinaryData(
+											imageBuffer,
+											imageFile,
+											`image/${imageFormat}`
+										),
+									},
+									pairedItem: { item: i },
+								});
+
+								// Limpiar imagen temporal
+								try {
+									unlinkSync(imagePath);
+								} catch (error) {
+									// Ignorar errores de limpieza
+								}
+							}
+						}
+
+					} finally {
+						// Limpiar archivos temporales
+						try {
+							unlinkSync(tempPdfFile);
+							const fs = require('fs');
+							fs.rmdirSync(tempDir, { recursive: true });
 						} catch (error) {
 							// Ignorar errores de limpieza
 						}

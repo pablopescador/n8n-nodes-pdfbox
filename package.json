@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-pdfbox",
-  "version": "0.1.0",
-  "description": "n8n community node para extracción de texto de PDFs usando Apache PDFBox",
+  "version": "0.2.0",
+  "description": "n8n community node para extracción de texto e imágenes de PDFs usando Apache PDFBox",
   "keywords": [
     "n8n-community-node-package",
     "n8n",

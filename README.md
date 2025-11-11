@@ -1,6 +1,6 @@
 # n8n-nodes-pdfbox
 
-Nodo comunitario de n8n para extracción de texto desde archivos PDF usando **Apache PDFBox**.
+Nodo comunitario de n8n para extracción de **texto e imágenes** desde archivos PDF usando **Apache PDFBox**.
 
 [![npm version](https://badge.fury.io/js/n8n-nodes-pdfbox.svg)](https://www.npmjs.com/package/n8n-nodes-pdfbox)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -15,7 +15,15 @@ El nodo nativo "Extract from File" de n8n usa `pdfjs-dist` que tiene un **bug cr
 Este nodo usa **Apache PDFBox** (estándar enterprise):
 - ✅ Sin crashes en PDFs grandes
 - ✅ Funciona en todas las arquitecturas
-- ✅ Extracción robusta de texto
+- ✅ Extracción robusta de texto **e imágenes**
+
+## Operaciones
+
+### 1. Extraer Texto
+Extrae todo el texto del PDF con estadísticas opcionales (líneas, palabras, caracteres).
+
+### 2. Extraer Imágenes
+Extrae todas las imágenes del PDF como archivos binarios separados (PNG o JPEG).
 
 ## Instalación
 
@@ -70,6 +78,8 @@ docker cp node_modules/n8n-nodes-pdfbox/scripts/pdfbox-wrapper.mjs \
 
 ## Uso
 
+### Extracción de Texto
+
 1. Añade el nodo **PDF Box** a tu workflow
 2. Conecta un nodo que provea datos binarios (ej: HTTP Request, Webhook)
 3. Configura:
@@ -79,15 +89,7 @@ docker cp node_modules/n8n-nodes-pdfbox/scripts/pdfbox-wrapper.mjs \
      - Incluir estadísticas: ✅
      - Max Buffer: 10 MB (ajustar para PDFs grandes)
 
-### Ejemplo de workflow
-
-```
-[HTTP Request] → [PDF Box] → [AI Agent]
-   (descarga)     (extrae)    (analiza)
-```
-
-## Output
-
+**Output:**
 ```json
 {
   "text": "Texto completo extraído del PDF...",
@@ -102,6 +104,54 @@ docker cp node_modules/n8n-nodes-pdfbox/scripts/pdfbox-wrapper.mjs \
   "extractedAt": "2025-11-11T22:30:00.000Z"
 }
 ```
+
+### Extracción de Imágenes
+
+1. Añade el nodo **PDF Box** a tu workflow
+2. Conecta un nodo que provea datos binarios
+3. Configura:
+   - **Operación**: Extraer Imágenes
+   - **Archivo PDF**: `data`
+   - **Opciones**:
+     - Formato de salida: PNG o JPEG
+     - Prefijo: `image` (personalizable)
+
+**Output:** Un item por cada imagen extraída, con datos binarios listos para guardar o procesar.
+
+```json
+{
+  "json": {
+    "fileName": "image-1.png",
+    "sourceFile": "documento.pdf",
+    "extractedAt": "2025-11-11T23:25:00.000Z"
+  },
+  "binary": {
+    "data": {
+      "data": "...",
+      "mimeType": "image/png",
+      "fileName": "image-1.png"
+    }
+  }
+}
+```
+
+### Ejemplo de workflow
+
+**Texto:**
+```
+[HTTP Request] → [PDF Box: Extraer Texto] → [AI Agent]
+   (descarga)          (extrae texto)         (analiza)
+```
+
+**Imágenes:**
+```
+[Webhook] → [PDF Box: Extraer Imágenes] → [Google Drive]
+ (recibe)        (extrae imágenes)          (guarda)
+```
+
+## Output
+
+Ver sección "Uso" arriba para ejemplos de output de cada operación.
 
 ## Desarrollo
 
