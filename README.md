@@ -17,6 +17,26 @@ Este nodo usa **Apache PDFBox** (estándar enterprise):
 - ✅ Funciona en todas las arquitecturas
 - ✅ Extracción robusta de texto **e imágenes**
 
+## Local vs Cloud: ¿Por qué PDFBox?
+
+### Procesamiento 100% Local
+- **✅ Privacidad total**: Tus PDFs nunca salen del servidor
+- **✅ Gratis**: Sin API keys, sin límites de uso, sin costos por volumen
+- **✅ Offline**: Funciona sin conexión a Internet
+- **✅ Sin vendor lock-in**: No dependes de servicios externos
+- **✅ GDPR compliant**: Ideal para datos sensibles (facturas, contratos, documentos legales)
+
+### Alternativas Cloud
+- ❌ Requieren API key de pago
+- ❌ Envían documentos a servidores externos
+- ❌ Costos variables según volumen
+- ❌ Dependencia de disponibilidad del servicio
+- ✅ Ofrecen IA y features avanzados (OCR multilenguaje, firmas digitales, clasificación)
+
+**¿Cuándo usar cada uno?**
+- **n8n-nodes-pdfbox**: Automatizaciones con PDFs confidenciales, alto volumen sin costos, infraestructura self-hosted
+- **Servicios cloud**: Necesitas IA, OCR avanzado, o no tienes restricciones de privacidad
+
 ## Operaciones
 
 ### 1. Extraer Texto
@@ -168,6 +188,47 @@ npm run build
 
 # Lint
 npm run lint
+```
+
+## Roadmap
+
+### Implementado (v0.2.3)
+- ✅ Extracción de texto con estadísticas
+- ✅ Extracción de imágenes (formatos originales: JPG, PNG, TIFF)
+- ✅ Instalación automática desde npm
+- ✅ Wrapper con ruta dinámica del paquete
+
+### Planificado
+- ⏳ Merge de múltiples PDFs
+- ⏳ Split de PDFs por páginas
+- ⏳ Añadir marcas de agua (texto/imagen)
+- ⏳ Extracción de metadatos (autor, fecha, propiedades)
+- ⏳ Conversión a PDF/A (archivo de larga duración)
+- ⏳ Optimización/compresión de PDFs
+
+### Contribuciones
+Pull requests bienvenidos. Para cambios grandes, abre primero un issue para discutir.
+
+## Casos de Uso
+
+### Automatización de Facturas
+```
+[Webhook Email] → [PDF Box: Texto] → [AI: Extract Invoice Data] → [Google Sheets]
+```
+
+### Archivo Digital de Documentos
+```
+[Google Drive Trigger] → [PDF Box: Imágenes] → [Image Resize] → [Cloud Storage]
+```
+
+### Análisis de Contratos
+```
+[Dropbox] → [PDF Box: Texto] → [OpenAI] → [Notion Database]
+```
+
+### Procesamiento de Formularios
+```
+[Upload Form] → [PDF Box: Texto] → [Regex Extract] → [CRM API]
 ```
 
 ## Licencia
